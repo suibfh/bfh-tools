@@ -25,10 +25,17 @@ export async function callBFHApi<T>(
 ): Promise<T> {
   const token = getAccessToken();
   
-  const headers: HeadersInit = {
+  const headers: Record<string, string> = {
     'Content-Type': 'application/json',
-    ...(options.headers || {}),
   };
+
+  // 既存のheadersをマージ
+  if (options.headers) {
+    const existingHeaders = new Headers(options.headers);
+    existingHeaders.forEach((value, key) => {
+      headers[key] = value;
+    });
+  }
 
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
